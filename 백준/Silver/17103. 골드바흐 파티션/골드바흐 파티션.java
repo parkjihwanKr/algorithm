@@ -1,62 +1,33 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.StringTokenizer;
+import java.util.ArrayList;
 
+// 17103번 골드바흐 파티션
 public class Main {
-    // 소수 판별 결과를 저장하기 위한 HashMap
-    static HashMap<Integer, Boolean> primeCache = new HashMap<>();
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
+        int t = Integer.parseInt(br.readLine());
 
-        st = new StringTokenizer(br.readLine());
-
-        // test case input
-        int input = Integer.parseInt(st.nextToken());
-
-        for (int i = 0; i < input; i++) {
-            st = new StringTokenizer(br.readLine());
-            int number = Integer.parseInt(st.nextToken());
-            System.out.println(isPrimeSum(number));
-        }
-    }
-
-    static int isPrimeSum(int number) {
-        int count = 0;
-        for (int i = 2; i <= number / 2; i++) {
-            int a = number - i;
-            if (isPrime(a) && isPrime(i)) {
-                //System.out.println("해당 숫자는 소수가 맞습니다!");
-                count++;
-            }
-        }
-        return count;
-    }
-
-    // 소수 판별 메서드에 메모이제이션 적용
-    static boolean isPrime(int number) {
-        // 1은 소수가 아님
-        if (number == 1) {
-            return false;
-        }
-
-        // 이미 계산된 결과가 있는지 확인
-        if (primeCache.containsKey(number)) {
-            return primeCache.get(number);
-        }
-
-        // 소수 판별 로직
-        for (int i = 2; i <= Math.sqrt(number); i++) {
-            if (number % i == 0) {
-                primeCache.put(number, false);
-                return false;
+        // 소수 구하기 = 소수 false
+        boolean[] num = new boolean[1000001];
+        num[0] = num[1] = true;
+        for (int i = 2; i * i <= 1000000; i++) {
+            if (!num[i]) {
+                for (int j = i + i; j <= 1000000; j += i) {
+                    num[j] = true;
+                }
             }
         }
 
-        primeCache.put(number, true);
-        return true;
+        while (t-- > 0) {
+            int temp = Integer.parseInt(br.readLine());
+            int ans = 0;
+            for (int j = 2; j <= temp / 2; j++) {
+                if (!num[j] && !num[temp - j]) ans++;
+            }
+            System.out.println(ans);
+        }
     }
+
 }
