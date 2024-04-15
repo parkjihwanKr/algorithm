@@ -2,25 +2,28 @@ import java.util.*;
 import java.io.*;
 
 public class Main{
-    static ArrayList[] l;
+    static ArrayList<Node>[] graph;
     static int[] dist;
 
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
+        // 1. input : vertex number, edge number, edge's weight
         int V = Integer.parseInt(st.nextToken());
         int E = Integer.parseInt(st.nextToken());
         int K = Integer.parseInt(br.readLine()) - 1;
 
-        l = new ArrayList[V];
+        // 2. initialize graph, distance
+        graph = new ArrayList[V];
         dist = new int[V];
 
         for(int i = 0; i<V; i++) {
-            l[i] = new ArrayList<Node>();
+            graph[i] = new ArrayList<Node>();
             dist[i] = Integer.MAX_VALUE;
         }
 
+        // 3. input u, v, w : u -> v의 가중치
         for(int i = 0; i<E; i++){
             st = new StringTokenizer(br.readLine());
 
@@ -28,9 +31,10 @@ public class Main{
             int v = Integer.parseInt(st.nextToken()) - 1;
             int w = Integer.parseInt(st.nextToken());
 
-            l[u].add(new Node(v, w));
+            graph[u].add(new Node(v, w));
         }
-
+        
+        // dijkstra algorithm
         dijkstra(K);
 
         StringBuilder sb = new StringBuilder();
@@ -45,37 +49,34 @@ public class Main{
     }
 
     static void dijkstra(int start){
+    	// 1. PriortiyQueue settings
         PriorityQueue<Node> pq = new PriorityQueue<>();
         dist[start] = 0;
         pq.add(new Node(start, 0));
 
+        // 2. dijkstra settings
         while(!pq.isEmpty()) {
-            Node node = pq.poll();
-            int nowVertex = node.vertex;
-            int nowWeight = node.weight;
-            int len = l[nowVertex].size();
-            for(int i = 0; i<len; i++){
-                Node next = (Node)l[nowVertex].get(i);
-
-                if(dist[next.vertex]>nowWeight + next.weight){
-                    dist[next.vertex] = nowWeight + next.weight;
-                    pq.add(new Node(next.vertex, dist[next.vertex]));
-                }
-            }
+        	int nowVertex = pq.poll().vertex;
+        	
+        	for(Node next : graph[nowVertex]) {
+        		if(dist[next.vertex] > dist[nowVertex] + next.weight) {
+        			dist[next.vertex] = dist[nowVertex] + next.weight;
+        			pq.add(new Node(next.vertex, dist[next.vertex]));
+        		}
+        	}
         }
     }
-}
+    static class Node implements Comparable<Node>{
+        int vertex, weight;
 
-class Node implements Comparable<Node>{
-    int vertex, weight;
+        public Node(int vertex, int weight){
+            this.vertex = vertex;
+            this.weight = weight;
+        }
 
-    public Node(int vertex, int weight){
-        this.vertex = vertex;
-        this.weight = weight;
-    }
-
-    @Override
-    public int compareTo(Node n){
-        return this.weight - n.weight;
+        @Override
+        public int compareTo(Node n){
+            return this.weight - n.weight;
+        }
     }
 }
