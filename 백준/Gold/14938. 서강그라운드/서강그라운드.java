@@ -74,6 +74,10 @@ public class Main {
 		while(!pq.isEmpty()) {
 			Node now = pq.poll();
 			
+			if (now.cost > distance[now.index]) {
+				continue;
+			}
+			 
 			for(Node next : map[now.index]) {
 				// 최단 경로
 				if(distance[next.index] > distance[now.index] + next.cost) {
